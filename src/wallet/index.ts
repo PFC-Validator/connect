@@ -75,7 +75,7 @@ class ConnectWalletC implements ConnectWallet {
     if (choiceLS) {
       return this.setChoice(choiceLS);
     }
-    console.log("LS not set?");
+    // console.log("LS not set?");
     return this.setChoice(WalletChoices.NotSet);
   }
   init(): Promise<void> {
@@ -106,13 +106,13 @@ class ConnectWalletC implements ConnectWallet {
     }
   }
   setChoice(choice: WalletChoices): boolean {
-    console.log("setChoice", this.choice, choice);
+    //    console.log("setChoice", this.choice, choice);
     if (choice == WalletChoices.NotSet) {
       this.status = WalletStatus.NotSet;
     }
     if (this.choices.has(choice)) {
       this.choice = choice;
-      console.log("setChoice2", this.choice, choice);
+      //    console.log("setChoice2", this.choice, choice);
       return true;
     }
 
@@ -137,7 +137,7 @@ class ConnectWalletC implements ConnectWallet {
   }
 
   account(): string | undefined {
-    console.log("in account", this.choice);
+    //console.log("in account", this.choice);
 
     switch (this.choice) {
       case WalletChoices.Terra:
@@ -155,14 +155,14 @@ class ConnectWalletC implements ConnectWallet {
     }
   }
   isSet(): boolean {
-    console.log("isSet", this.choice);
+    // console.log("isSet", this.choice);
     return this.choice !== WalletChoices.NotSet;
   }
   connect(choice?: WalletChoices): Promise<void> {
     if (choice) {
       this.setChoice(choice);
     }
-    console.log("connect button");
+    //   console.log("connect button");
 
     switch (this.choice) {
       case WalletChoices.Terra:

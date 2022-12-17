@@ -21,7 +21,6 @@ export function keplr_wallet_account(wallet: KeplrWalletStore): string | undefin
   return wallet.address;
 }
 export function keplr_wallet_status(wallet: KeplrWalletStore): ConnectWalletStatus {
-  console.log("keplr - ", wallet);
   if (wallet.initializing) {
     return ConnectWalletStatus.Uninit;
   }
