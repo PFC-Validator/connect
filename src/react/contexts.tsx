@@ -1,100 +1,96 @@
-import {SigningCosmWasmClient} from '@cosmjs/cosmwasm-stargate';
-import {Decimal} from '@cosmjs/math';
-import type {OfflineSigner} from '@cosmjs/proto-signing';
-import type {Coin} from '@cosmjs/stargate';
-import React, {useEffect} from 'react';
-import {toast} from 'react-hot-toast';
-import {createTrackedSelector} from 'react-tracked';
-import create from 'zustand';
-import {subscribeWithSelector} from 'zustand/middleware';
-import {Window as KeplrWindow} from '@keplr-wallet/types';
+import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { Decimal } from "@cosmjs/math";
+import type { OfflineSigner } from "@cosmjs/proto-signing";
+import type { Coin } from "@cosmjs/stargate";
+import React, { useEffect } from "react";
+import { toast } from "react-hot-toast";
+import { createTrackedSelector } from "react-tracked";
+import create from "zustand";
+import { subscribeWithSelector } from "zustand/middleware";
+import { Window as KeplrWindow } from "@keplr-wallet/types";
 
-import {NETWORK} from '../lib/env';
+import { NETWORK } from "../lib/env";
 
 import logger from "../lib/logger";
-import {AppConfig, KeplrWalletStore} from "./defs";
-import {keplrConfig} from "./config";
-import {getConfig} from "./defaults";
-import {StaticWalletProvider, WalletProvider, WalletProviderProps} from "@terra-money/wallet-provider";
+import { AppConfig, KeplrWalletStore } from "./defs";
+import { keplrConfig } from "./config";
+import { getConfig } from "./defaults";
+import { StaticWalletProvider, WalletProvider, WalletProviderProps } from "@terra-money/wallet-provider";
 
 declare global {
-    // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    interface Window extends KeplrWindow {
-    }
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface Window extends KeplrWindow {}
 }
 /**
  * Keplr wallet store default values as a separate variable for reusability
  */
 const defaultStates = {
-    accountNumber: 0,
-    address: '',
-    balance: [],
-    client: undefined,
-    config: getConfig(NETWORK),
-    initialized: false,
-    initializing: true,
-    name: '',
-    network: NETWORK,
-    signer: undefined,
+  accountNumber: 0,
+  address: "",
+  balance: [],
+  client: undefined,
+  config: getConfig(NETWORK),
+  initialized: false,
+  initializing: true,
+  name: "",
+  network: NETWORK,
+  signer: undefined,
 };
 
 /**
  * Entrypoint for keplr wallet store using {@link defaultStates}
  */
 export const useWalletStore = create(
-    subscribeWithSelector<KeplrWalletStore>((set, get) => ({
-        ...defaultStates,
-        clear: () => set({...defaultStates}),
-        connect: async (walletChange = false) => {
-            try {
-                if (walletChange !== 'focus') set({initializing: true});
-                const {config, init} = get();
-                const signer = await loadKeplrWallet(config);
-                init(signer);
-                if (walletChange) set({initializing: false});
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            } catch (err: any) {
-                toast.error(err?.message);
-                set({initializing: false});
-            }
-        },
-        disconnect: () => {
-            window.localStorage.clear();
-            get().clear();
-            set({initializing: false});
-        },
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        getClient: () => get().client!,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        getSigner: () => get().signer!,
-        init: (signer) => set({signer}),
-        refreshBalance: async (
-            address = get().address,
-            balance = get().balance
-        ) => {
-            const {client, config} = get();
-            if (!client) return;
-            balance.length = 0;
-            for (const denom in config.coinMap) {
-                // eslint-disable-next-line no-await-in-loop
-                const coin = await client.getBalance(address, denom);
-                if (coin) balance.push(coin);
-            }
-            set({balance});
-        },
-        setNetwork: (network) => set({network}),
-        updateSigner: (signer) => set({signer}),
-        setQueryClient: async () => {
-            try {
-                const client = (await createQueryClient()) as SigningCosmWasmClient;
-                set({client});
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            } catch (err: any) {
-                toast.error(err?.message);
-                set({initializing: false});
-            }
-        },
-    }))
+  subscribeWithSelector<KeplrWalletStore>((set, get) => ({
+    ...defaultStates,
+    clear: () => set({ ...defaultStates }),
+    connect: async (walletChange = false) => {
+      try {
+        if (walletChange !== "focus") set({ initializing: true });
+        const { config, init } = get();
+        const signer = await loadKeplrWallet(config);
+        init(signer);
+        if (walletChange) set({ initializing: false });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (err: any) {
+        toast.error(err?.message);
+        set({ initializing: false });
+      }
+    },
+    disconnect: () => {
+      window.localStorage.clear();
+      get().clear();
+      set({ initializing: false });
+    },
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    getClient: () => get().client!,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    getSigner: () => get().signer!,
+    init: (signer) => set({ signer }),
+    refreshBalance: async (address = get().address, balance = get().balance) => {
+      const { client, config } = get();
+      if (!client) return;
+      balance.length = 0;
+      for (const denom in config.coinMap) {
+        // eslint-disable-next-line no-await-in-loop
+        const coin = await client.getBalance(address, denom);
+        if (coin) balance.push(coin);
+      }
+      set({ balance });
+    },
+    setNetwork: (network) => set({ network }),
+    updateSigner: (signer) => set({ signer }),
+    setQueryClient: async () => {
+      try {
+        const client = (await createQueryClient()) as SigningCosmWasmClient;
+        set({ client });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (err: any) {
+        toast.error(err?.message);
+        set({ initializing: false });
+      }
+    },
+  })),
 );
 
 /**
@@ -112,8 +108,7 @@ export const useWalletStore = create(
  * const { name } = useWallet()
  * ```
  */
-export const useWallet =
-    createTrackedSelector<KeplrWalletStore>(useWalletStore);
+export const useWallet = createTrackedSelector<KeplrWalletStore>(useWalletStore);
 
 /**
  * Keplr wallet store provider to easily mount {@link WalletSubscription}
@@ -121,138 +116,136 @@ export const useWallet =
  *
  */
 export const ConnectWalletProvider = ({
-                                          children,
-                                          defaultNetwork,
-                                          walletConnectChainIds,
-                                          connectorOpts,
-                                          pushServerOpts,
-                                          createReadonlyWalletSession,
-                                          selectExtension,
-                                          waitingChromeExtensionInstallCheck,
-                                          dangerously__chromeExtensionCompatibleBrowserCheck,
-                                          plugins,
-                                      }: WalletProviderProps) => {
-    return typeof window !== 'undefined' ? (
-        <WalletProvider
-            defaultNetwork={defaultNetwork}
-            walletConnectChainIds={walletConnectChainIds}
-            connectorOpts={connectorOpts}
-            pushServerOpts={pushServerOpts}
-            createReadonlyWalletSession={createReadonlyWalletSession}
-            selectExtension={selectExtension}
-            waitingChromeExtensionInstallCheck={waitingChromeExtensionInstallCheck}
-            dangerously__chromeExtensionCompatibleBrowserCheck={dangerously__chromeExtensionCompatibleBrowserCheck}
-            plugins={plugins}
-
-        >
-            {children}
-            <WalletSubscription/>
-        </WalletProvider>
-    ) : (
-        <StaticWalletProvider
-            defaultNetwork={defaultNetwork}>
-            {children}
-            <WalletSubscription/>
-        </StaticWalletProvider>
-    )
+  children,
+  defaultNetwork,
+  walletConnectChainIds,
+  connectorOpts,
+  pushServerOpts,
+  createReadonlyWalletSession,
+  selectExtension,
+  waitingChromeExtensionInstallCheck,
+  dangerously__chromeExtensionCompatibleBrowserCheck,
+  plugins,
+}: WalletProviderProps) => {
+  return typeof window !== "undefined" ? (
+    <WalletProvider
+      defaultNetwork={defaultNetwork}
+      walletConnectChainIds={walletConnectChainIds}
+      connectorOpts={connectorOpts}
+      pushServerOpts={pushServerOpts}
+      createReadonlyWalletSession={createReadonlyWalletSession}
+      selectExtension={selectExtension}
+      waitingChromeExtensionInstallCheck={waitingChromeExtensionInstallCheck}
+      dangerously__chromeExtensionCompatibleBrowserCheck={dangerously__chromeExtensionCompatibleBrowserCheck}
+      plugins={plugins}
+    >
+      {children}
+      <WalletSubscription />
+    </WalletProvider>
+  ) : (
+    <StaticWalletProvider defaultNetwork={defaultNetwork}>
+      {children}
+      <WalletSubscription />
+    </StaticWalletProvider>
+  );
 };
 
 /**
  * Keplr wallet subscriptions (side effects)
  */
 const WalletSubscription = () => {
-    /**
-     * Dispatch reconnecting wallet on first mount and register events to refresh
-     * on keystore change and window refocus.
-     *
-     * @see https://github.com/CosmosContracts/juno-tools/blob/41c256f71d2b8b55fade12fae3b8c6a493a1e3ce/pages/_app.tsx#L19-L35
-     */
-    useEffect(() => {
-        const walletAddress = window.localStorage.getItem('wallet_address');
-        if (walletAddress) {
-            void useWalletStore.getState().connect();
-        } else {
-            useWalletStore.setState({initializing: false});
-            useWalletStore.getState().setQueryClient();
+  /**
+   * Dispatch reconnecting wallet on first mount and register events to refresh
+   * on keystore change and window refocus.
+   *
+   * @see https://github.com/CosmosContracts/juno-tools/blob/41c256f71d2b8b55fade12fae3b8c6a493a1e3ce/pages/_app.tsx#L19-L35
+   */
+  useEffect(() => {
+    const walletAddress = window.localStorage.getItem("wallet_address");
+    if (walletAddress) {
+      void useWalletStore.getState().connect();
+    } else {
+      useWalletStore.setState({ initializing: false });
+      useWalletStore.getState().setQueryClient();
+    }
+
+    const listenChange = () => {
+      void useWalletStore.getState().connect(true);
+    };
+    const listenFocus = () => {
+      if (walletAddress) void useWalletStore.getState().connect("focus");
+    };
+
+    window.addEventListener("keplr_keystorechange", listenChange);
+    window.addEventListener("focus", listenFocus);
+
+    return () => {
+      window.removeEventListener("keplr_keystorechange", listenChange);
+      window.removeEventListener("focus", listenFocus);
+    };
+  }, []);
+
+  /**
+   * Watch signer changes to initialize client state.
+   *
+   * @see https://github.com/CosmosContracts/juno-tools/blob/41c256f71d2b8b55fade12fae3b8c6a493a1e3ce/contexts/wallet.tsx#L95-L105
+   */
+  useEffect(() => {
+    return useWalletStore.subscribe(
+      (x) => x.signer,
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      async (signer) => {
+        try {
+          if (!signer) {
+            useWalletStore.setState({
+              client: (await createQueryClient()) as SigningCosmWasmClient,
+            });
+          } else {
+            useWalletStore.setState({
+              client: await createClient({ signer }),
+            });
+          }
+        } catch (error) {
+          logger(error, "error- useWalletStore Subscribe");
         }
+      },
+    );
+  }, []);
 
-        const listenChange = () => {
-            void useWalletStore.getState().connect(true);
-        };
-        const listenFocus = () => {
-            if (walletAddress) void useWalletStore.getState().connect('focus');
-        };
+  /**
+   * Watch client changes to refresh balance and sync wallet states.
+   *
+   * @see https://github.com/CosmosContracts/juno-tools/blob/41c256f71d2b8b55fade12fae3b8c6a493a1e3ce/contexts/wallet.tsx#L107-L139
+   */
+  useEffect(() => {
+    return useWalletStore.subscribe(
+      (x) => x.client,
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      async (client) => {
+        const { config, refreshBalance, signer } = useWalletStore.getState();
+        if (!signer || !client) return;
+        if (!window.keplr) {
+          throw new Error("window.keplr not found");
+        }
+        const balance: Coin[] = [];
+        const address = (await signer.getAccounts())[0].address;
+        const account = await client.getAccount(address);
+        const key = await window.keplr.getKey(config.chainId);
+        await refreshBalance(address, balance);
+        window.localStorage.setItem("wallet_address", address);
+        useWalletStore.setState({
+          accountNumber: account?.accountNumber || 0,
+          address,
+          balance,
+          initialized: true,
+          initializing: false,
+          name: key.name || "",
+        });
+      },
+    );
+  }, []);
 
-        window.addEventListener('keplr_keystorechange', listenChange);
-        window.addEventListener('focus', listenFocus);
-
-        return () => {
-            window.removeEventListener('keplr_keystorechange', listenChange);
-            window.removeEventListener('focus', listenFocus);
-        };
-    }, []);
-
-    /**
-     * Watch signer changes to initialize client state.
-     *
-     * @see https://github.com/CosmosContracts/juno-tools/blob/41c256f71d2b8b55fade12fae3b8c6a493a1e3ce/contexts/wallet.tsx#L95-L105
-     */
-    useEffect(() => {
-        return useWalletStore.subscribe(
-            (x) => x.signer,
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            async (signer) => {
-                try {
-                    if (!signer) {
-                        useWalletStore.setState({
-                            client: (await createQueryClient()) as SigningCosmWasmClient,
-                        });
-                    } else {
-                        useWalletStore.setState({
-                            client: await createClient({signer}),
-                        });
-                    }
-                } catch (error) {
-                    logger(error, 'error- useWalletStore Subscribe');
-                }
-            }
-        );
-    }, []);
-
-    /**
-     * Watch client changes to refresh balance and sync wallet states.
-     *
-     * @see https://github.com/CosmosContracts/juno-tools/blob/41c256f71d2b8b55fade12fae3b8c6a493a1e3ce/contexts/wallet.tsx#L107-L139
-     */
-    useEffect(() => {
-        return useWalletStore.subscribe(
-            (x) => x.client,
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            async (client) => {
-                const {config, refreshBalance, signer} = useWalletStore.getState();
-                if (!signer || !client) return;
-                if (!window.keplr) {
-                    throw new Error('window.keplr not found');
-                }
-                const balance: Coin[] = [];
-                const address = (await signer.getAccounts())[0].address;
-                const account = await client.getAccount(address);
-                const key = await window.keplr.getKey(config.chainId);
-                await refreshBalance(address, balance);
-                window.localStorage.setItem('wallet_address', address);
-                useWalletStore.setState({
-                    accountNumber: account?.accountNumber || 0,
-                    address,
-                    balance,
-                    initialized: true,
-                    initializing: false,
-                    name: key.name || '',
-                });
-            }
-        );
-    }, []);
-
-    return null;
+  return null;
 };
 
 /**
@@ -262,19 +255,19 @@ const WalletSubscription = () => {
  * @see https://github.com/CosmosContracts/juno-tools/blob/41c256f71d2b8b55fade12fae3b8c6a493a1e3ce/services/keplr.ts#L9-L21
  * @param arg - Object argument requiring `signer`
  */
-const createClient = ({signer}: { signer: OfflineSigner }) => {
-    const {config} = useWalletStore.getState();
-    return SigningCosmWasmClient.connectWithSigner(config.rpcUrl, signer, {
-        gasPrice: {
-            amount: Decimal.fromUserInput('0.0025', 100),
-            denom: config.feeToken,
-        },
-    });
+const createClient = ({ signer }: { signer: OfflineSigner }) => {
+  const { config } = useWalletStore.getState();
+  return SigningCosmWasmClient.connectWithSigner(config.rpcUrl, signer, {
+    gasPrice: {
+      amount: Decimal.fromUserInput("0.0025", 100),
+      denom: config.feeToken,
+    },
+  });
 };
 
 const createQueryClient = () => {
-    const {config} = useWalletStore.getState();
-    return SigningCosmWasmClient.connect(config.rpcUrl);
+  const { config } = useWalletStore.getState();
+  return SigningCosmWasmClient.connect(config.rpcUrl);
 };
 
 /**
@@ -284,22 +277,18 @@ const createQueryClient = () => {
  * @param config - Application configuration
  */
 const loadKeplrWallet = async (config: AppConfig) => {
-    if (
-        !window.getOfflineSigner ||
-        !window.keplr ||
-        !window.getOfflineSignerAuto
-    ) {
-        throw new Error('Keplr extension is not available');
-    }
+  if (!window.getOfflineSigner || !window.keplr || !window.getOfflineSignerAuto) {
+    throw new Error("Keplr extension is not available");
+  }
 
-    await window.keplr.experimentalSuggestChain(keplrConfig(config));
-    await window.keplr.enable(config.chainId);
+  await window.keplr.experimentalSuggestChain(keplrConfig(config));
+  await window.keplr.enable(config.chainId);
 
-    const signer = await window.getOfflineSignerAuto(config.chainId);
-    Object.assign(signer, {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        signAmino: (signer as any).signAmino ?? (signer as any).sign,
-    });
+  const signer = await window.getOfflineSignerAuto(config.chainId);
+  Object.assign(signer, {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    signAmino: (signer as any).signAmino ?? (signer as any).sign,
+  });
 
-    return signer;
+  return signer;
 };
