@@ -1,3 +1,5 @@
+import { getShortAddress } from "../lib/utils";
+
 export * from "./WalletProvider";
 
 import { Wallet as TerraWallet } from "@terra-money/wallet-provider";
@@ -31,12 +33,14 @@ import logger from "../lib/logger";
 const WALLET_CHOICE = "connect_walletchoice";
 export function getWalletPreference(): WalletChoices | undefined {
   const item = localStorage.getItem(WALLET_CHOICE);
+
   if (item == null) {
     return undefined;
   }
   const values = Object.keys(WalletChoices);
-  const val = values.find((v) => v == item);
+  const val = values.find((v) => v.toLowerCase() == item.toLowerCase());
   if (!val) {
+    logger(val, "getWalletPreference VAL not found");
     return undefined;
   }
   return val as WalletChoices;
@@ -69,6 +73,9 @@ class ConnectWalletC implements ConnectWallet {
 
   setWalletChoiceToLocalStorage(): void {
     localStorage.setItem(WALLET_CHOICE, this.choice);
+    if (window) {
+      window.dispatchEvent(new Event("storage"));
+    }
   }
   getWalletChoiceFromLocalStorage(): boolean {
     const choiceLS = getWalletPreference();
@@ -218,9 +225,25 @@ class ConnectWalletC implements ConnectWallet {
     this.setStatus();
     return this.status;
   }
+  getWalletName(): string {
+    switch (this.choice) {
+      case WalletChoices.WalletConnect:
+      case WalletChoices.Terra:
+        return getShortAddress(this.account());
+
+      case WalletChoices.Keplr:
+        return this.k.name;
+
+      case WalletChoices.NotSet:
+        return "choice not set";
+      default:
+        logger(this, "Attempt to get getWalletName on unknown wallet");
+        return "error";
+    }
+  }
 }
 let c: ConnectWallet | undefined = undefined;
-export function useConnectWallet(): ConnectWallet {
+export function useConnectWallet(choice?: WalletChoices): ConnectWallet {
   const t = useTerraWallet();
   const k = useKeplrWallet();
   if (c) {
@@ -228,6 +251,9 @@ export function useConnectWallet(): ConnectWallet {
     c.setK(k);
   } else {
     c = new ConnectWalletC(t, k);
+  }
+  if (choice) {
+    c.setChoice(choice);
   }
   return c;
 }

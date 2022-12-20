@@ -22,7 +22,7 @@ export function keplr_wallet_account(wallet: KeplrWalletStore): string | undefin
 }
 export function keplr_wallet_status(wallet: KeplrWalletStore): ConnectWalletStatus {
   if (wallet.initializing) {
-    return ConnectWalletStatus.Uninit;
+    return ConnectWalletStatus.NotInit;
   }
 
   if (wallet.initialized) {

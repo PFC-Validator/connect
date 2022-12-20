@@ -40,7 +40,7 @@ export function terra_wallet_status(wallet: Wallet): ConnectWalletStatus {
     case WalletStatus.WALLET_NOT_CONNECTED:
       return ConnectWalletStatus.NotConnected;
     case WalletStatus.INITIALIZING:
-      return ConnectWalletStatus.Uninit;
+      return ConnectWalletStatus.NotInit;
     default:
       return ConnectWalletStatus.Error;
   }

@@ -3,16 +3,16 @@ import { KeplrWalletStore } from "../react";
 //export const WALLETCHOICE = "wallet_choice";
 
 export enum WalletChoices {
-  NotSet = "not set",
-  Keplr = "keplr",
-  Terra = "terra-station",
-  WalletConnect = "connect",
+  NotSet = "NotSet",
+  Keplr = "Keplr",
+  Terra = "Terra",
+  WalletConnect = "WalletConnect",
 }
 export enum WalletStatus {
-  Uninit = "Not Init",
-  Connected = "connected",
-  NotConnected = "not connected",
-  NotSet = "not set",
+  NotInit = "NotInit",
+  Connected = "Connected",
+  NotConnected = "NotConnected",
+  NotSet = "NotSet",
   Error = "Error",
 }
 
@@ -34,4 +34,5 @@ export interface ConnectWallet {
   setT(t: TerraWallet): void;
   setK(k: KeplrWalletStore): void;
   getStatus(): WalletStatus;
+  getWalletName(): string;
 }
