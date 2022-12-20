@@ -1,7 +1,4 @@
 import { getShortAddress } from "../lib/utils";
-
-export * from "./WalletProvider";
-
 import { Wallet as TerraWallet } from "@terra-money/wallet-provider";
 import { ConnectWallet, WalletChoices, WalletStatus } from "./WalletProvider";
 import {
@@ -29,6 +26,8 @@ import {
 } from "./wallet_connect";
 import { KeplrWalletStore } from "../react";
 import logger from "../lib/logger";
+
+export * from "./WalletProvider";
 
 const WALLET_CHOICE = "connect_walletchoice";
 export function getWalletPreference(): WalletChoices | undefined {
@@ -252,7 +251,7 @@ export function useConnectWallet(choice?: WalletChoices): ConnectWallet {
   } else {
     c = new ConnectWalletC(t, k);
   }
-  if (choice) {
+  if (choice && choice != WalletChoices.NotSet) {
     c.setChoice(choice);
   }
   return c;
