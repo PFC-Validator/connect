@@ -3,6 +3,7 @@ import { Wallet as TerraWallet } from "@terra-money/wallet-provider";
 import { ConnectWallet, WalletChoices, WalletStatus } from "./WalletProvider";
 import {
   is_keplr_available,
+  keplr_relatedAccountsForWallet,
   keplr_wallet_account,
   keplr_wallet_connect,
   keplr_wallet_disconnect,
@@ -11,6 +12,7 @@ import {
 } from "./keplr";
 import {
   is_terra_available,
+  terra_relatedAccountsForWallet,
   terra_wallet_account,
   terra_wallet_connect,
   terra_wallet_disconnect,
@@ -19,6 +21,7 @@ import {
 } from "./terra";
 import {
   is_walletconnect_available,
+  walletconnect_relatedAccountsForWallet,
   walletconnect_wallet_account,
   walletconnect_wallet_connect,
   walletconnect_wallet_disconnect,
@@ -238,6 +241,23 @@ class ConnectWalletC implements ConnectWallet {
       default:
         logger(this, "Attempt to get getWalletName on unknown wallet");
         return "error";
+    }
+  }
+  relatedAccountsForWallet(chains: string[]): Promise<Map<string, string>> {
+    switch (this.choice) {
+      case WalletChoices.WalletConnect:
+        return walletconnect_relatedAccountsForWallet(this.t, chains);
+      case WalletChoices.Terra:
+        return terra_relatedAccountsForWallet(this.t, chains);
+
+      case WalletChoices.Keplr:
+        return keplr_relatedAccountsForWallet(chains);
+
+      case WalletChoices.NotSet:
+        return Promise.resolve(new Map());
+      default:
+        logger(this, "Attempt to get relatedAccountsForWallet on unknown wallet");
+        return Promise.resolve(new Map());
     }
   }
 }

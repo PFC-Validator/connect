@@ -38,3 +38,25 @@ export function is_keplr_available(): boolean {
 
   return !(!window.getOfflineSigner || !window.keplr || !window.getOfflineSignerAuto);
 }
+export async function keplr_relatedAccountsForWallet(chains: string[]): Promise<Map<string, string>> {
+  const accounts: Map<string, string> = new Map();
+
+  if (typeof window === "undefined") {
+    return Promise.resolve(accounts);
+  }
+  if (!window?.keplr) {
+    return Promise.resolve(accounts);
+  }
+  const keplr = window.keplr;
+  await keplr.enable(chains);
+
+  for (const chain of chains) {
+    const signer = keplr.getOfflineSigner(chain);
+    const accountsChain = await signer.getAccounts();
+    if (accountsChain.length > 0) {
+      accounts.set(chain, accountsChain[0].address);
+    }
+  }
+
+  return accounts;
+}

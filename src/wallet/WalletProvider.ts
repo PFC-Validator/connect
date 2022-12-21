@@ -35,4 +35,5 @@ export interface ConnectWallet {
   setK(k: KeplrWalletStore): void;
   getStatus(): WalletStatus;
   getWalletName(): string;
+  relatedAccountsForWallet(chains: string[]): Promise<Map<string, string>>;
 }

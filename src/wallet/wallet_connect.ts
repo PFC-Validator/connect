@@ -3,7 +3,13 @@ import { toast } from "react-hot-toast";
 
 import logger from "../lib/logger";
 
-import { terra_wallet_account, terra_wallet_disconnect, terra_wallet_status, useTerraWallet } from "./terra";
+import {
+  terra_relatedAccountsForWallet,
+  terra_wallet_account,
+  terra_wallet_disconnect,
+  terra_wallet_status,
+  useTerraWallet,
+} from "./terra";
 import { WalletStatus as ConnectWalletStatus } from "./WalletProvider";
 
 export function walletconnect_wallet_connect(wallet: Wallet): void {
@@ -52,4 +58,10 @@ export function is_walletconnect_available(wallet: Wallet): boolean {
     return c == "WALLETCONNECT";
   });
   return !!ct;
+}
+export async function walletconnect_relatedAccountsForWallet(
+  wallet: Wallet,
+  chains: string[],
+): Promise<Map<string, string>> {
+  return terra_relatedAccountsForWallet(wallet, chains);
 }

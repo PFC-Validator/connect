@@ -62,3 +62,15 @@ export function is_terra_available(wallet: Wallet): boolean {
   });
   return !!ct;
 }
+export async function terra_relatedAccountsForWallet(wallet: Wallet, chains: string[]): Promise<Map<string, string>> {
+  const account = terra_wallet_account(wallet);
+  const ret: Map<string, string> = new Map();
+  if (account) {
+    chains.forEach((c) => {
+      if (c == "phoenix-1" || c == "pisco-1") {
+        ret.set(c, account);
+      }
+    });
+  }
+  return ret;
+}
