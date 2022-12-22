@@ -67,10 +67,11 @@ export async function terra_relatedAccountsForWallet(wallet: Wallet, chains: str
   const ret: Map<string, string> = new Map();
   if (account) {
     chains.forEach((c) => {
-      if (c == "phoenix-1" || c == "pisco-1") {
+      if (c == "phoenix-1" || c == "pisco-1" || c == "columbus-5") {
         ret.set(c, account);
       }
     });
   }
+
   return ret;
 }

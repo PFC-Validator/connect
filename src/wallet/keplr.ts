@@ -52,9 +52,19 @@ export async function keplr_relatedAccountsForWallet(chains: string[]): Promise<
 
   for (const chain of chains) {
     const signer = keplr.getOfflineSigner(chain);
-    const accountsChain = await signer.getAccounts();
-    if (accountsChain.length > 0) {
-      accounts.set(chain, accountsChain[0].address);
+    const accts = await signer
+      .getAccounts()
+      .then((accountsChain) => {
+        if (accountsChain.length > 0) {
+          return accountsChain[0].address;
+        }
+        return undefined;
+      })
+      .catch((_r) => {
+        console.log("keplr_related", chain, chains, _r);
+      });
+    if (accts) {
+      accounts.set(chain, accts);
     }
   }
 
