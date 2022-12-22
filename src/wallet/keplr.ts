@@ -62,6 +62,7 @@ export async function keplr_relatedAccountsForWallet(chains: string[]): Promise<
       })
       .catch((_r) => {
         console.log("keplr_related", chain, chains, _r);
+        return undefined;
       });
     if (accts) {
       accounts.set(chain, accts);
