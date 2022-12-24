@@ -1,12 +1,17 @@
 {
-  "include": ["src"],
+  "include": [
+    "src"
+  ],
   "exclude": [
     "dist",
     "node_modules"
   ],
   "compilerOptions": {
     "module": "esnext",
-    "lib": ["dom", "esnext"],
+    "lib": [
+      "dom",
+      "esnext"
+    ],
     "importHelpers": true,
     "declaration": true,
     "sourceMap": true,
@@ -24,5 +29,14 @@
     "jsx": "react",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "~/*": ["./public/*"]
+    }
+  },
+  "paths": {
+    "crypto": [
+      "./node_modules/crypto-js"
+    ]
   }
 }

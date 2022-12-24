@@ -1,9 +1,10 @@
 import { getShortAddress } from "../lib/utils";
 import { Wallet as TerraWallet } from "@terra-money/wallet-provider";
-import { ConnectWallet, WalletChoices, WalletStatus } from "./WalletProvider";
+import { ConnectGetMessage, ConnectWallet, WalletChoices, WalletStatus } from "./WalletProvider";
 import {
   is_keplr_available,
   keplr_relatedAccountsForWallet,
+  keplr_submit,
   keplr_wallet_account,
   keplr_wallet_connect,
   keplr_wallet_disconnect,
@@ -13,6 +14,7 @@ import {
 import {
   is_terra_available,
   terra_relatedAccountsForWallet,
+  terra_submit,
   terra_wallet_account,
   terra_wallet_connect,
   terra_wallet_disconnect,
@@ -29,6 +31,7 @@ import {
 } from "./wallet_connect";
 import { KeplrWalletStore } from "../react";
 import logger from "../lib/logger";
+import { GasPrice, StdFee } from "@cosmjs/stargate";
 
 export * from "./WalletProvider";
 
@@ -259,6 +262,37 @@ class ConnectWalletC implements ConnectWallet {
         logger(this, "Attempt to get relatedAccountsForWallet on unknown wallet");
         return Promise.resolve(new Map());
     }
+  }
+  async submit(
+    getMessages: ConnectGetMessage,
+    chain_id: string,
+    api: string,
+    rpc: string,
+    gasPrice: GasPrice,
+    memo: string,
+    fee: StdFee | "auto",
+  ): Promise<string | undefined> {
+    const accountMap = await this.relatedAccountsForWallet([chain_id]);
+    if (accountMap.size != 1) {
+      console.log("unable to get account for chain ", chain_id);
+      return Promise.resolve(undefined);
+    }
+    const account = accountMap.get(chain_id);
+
+    if (!account) {
+      console.log("unable to get account for chain (null)", chain_id);
+      return Promise.resolve(undefined);
+    }
+
+    const msgs = await getMessages(this, chain_id, account);
+    if (this.choice == WalletChoices.Keplr) {
+      return keplr_submit(chain_id, account, msgs, api, rpc, gasPrice, memo, fee);
+    }
+    if (this.choice == WalletChoices.Terra || this.choice == WalletChoices.WalletConnect) {
+      return terra_submit(this.t, chain_id, msgs, memo, fee);
+    }
+
+    return undefined;
   }
 }
 let c: ConnectWallet | undefined = undefined;

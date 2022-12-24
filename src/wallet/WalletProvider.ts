@@ -1,5 +1,7 @@
 import { Wallet as TerraWallet } from "@terra-money/use-wallet/useWallet";
 import { KeplrWalletStore } from "../react";
+import { GasPrice, StdFee } from "@cosmjs/stargate";
+import { EncodeObject } from "@cosmjs/proto-signing";
 //export const WALLETCHOICE = "wallet_choice";
 
 export enum WalletChoices {
@@ -15,7 +17,11 @@ export enum WalletStatus {
   NotSet = "NotSet",
   Error = "Error",
 }
-
+export type ConnectGetMessage = (
+  wallet: ConnectWallet,
+  chain_id: string,
+  account: string,
+) => Promise<(any | EncodeObject)[]>;
 export interface ConnectWallet {
   readonly t: TerraWallet;
 
@@ -36,4 +42,13 @@ export interface ConnectWallet {
   getStatus(): WalletStatus;
   getWalletName(): string;
   relatedAccountsForWallet(chains: string[]): Promise<Map<string, string>>;
+  submit(
+    getMessages: ConnectGetMessage,
+    chain_id: string,
+    api: string,
+    rpc: string,
+    gasPrice: GasPrice,
+    memo: string,
+    fee: number | StdFee | "auto",
+  ): Promise<string | undefined>;
 }

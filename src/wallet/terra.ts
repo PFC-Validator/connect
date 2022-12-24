@@ -3,6 +3,8 @@ import { WalletStatus as ConnectWalletStatus } from "./WalletProvider";
 import { toast } from "react-hot-toast";
 
 import logger from "../lib/logger";
+import { StdFee } from "@cosmjs/stargate";
+import { ExtensionOptions, Fee } from "@terra-money/terra.js";
 
 export function terra_wallet_connect(wallet: Wallet): void {
   if (
@@ -33,6 +35,7 @@ export function terra_wallet_connect(wallet: Wallet): void {
 export function terra_wallet_disconnect(wallet: Wallet): void {
   wallet.disconnect();
 }
+
 export function terra_wallet_status(wallet: Wallet): ConnectWalletStatus {
   switch (wallet.status) {
     case WalletStatus.WALLET_CONNECTED:
@@ -45,6 +48,7 @@ export function terra_wallet_status(wallet: Wallet): ConnectWalletStatus {
       return ConnectWalletStatus.Error;
   }
 }
+
 export function terra_wallet_account(wallet: Wallet): string | undefined {
   if (wallet.wallets.length > 0) {
     return wallet.wallets[0].terraAddress;
@@ -62,6 +66,7 @@ export function is_terra_available(wallet: Wallet): boolean {
   });
   return !!ct;
 }
+
 export async function terra_relatedAccountsForWallet(wallet: Wallet, chains: string[]): Promise<Map<string, string>> {
   const account = terra_wallet_account(wallet);
   const ret: Map<string, string> = new Map();
@@ -74,4 +79,29 @@ export async function terra_relatedAccountsForWallet(wallet: Wallet, chains: str
   }
 
   return ret;
+}
+
+export async function terra_submit(
+  wallet: Wallet,
+  _chain_id: string,
+  msgs: any[],
+  memo: string,
+  fee?: StdFee | "auto",
+): Promise<string | undefined> {
+  let terraFee: Fee | undefined;
+  if ((<StdFee>fee).gas) {
+    terraFee = new Fee(Number((<StdFee>fee).gas), (<StdFee>fee).amount.toString());
+  } else {
+    terraFee = undefined;
+  }
+  const transactionMsg: ExtensionOptions = {
+    fee: terraFee, //new Fee(200000, "3000uluna"),
+    msgs,
+    memo: memo,
+  };
+
+  const txResult = await wallet.post(transactionMsg);
+  // eslint-disable-next-line no-console
+  console.log("tx Response Terra", txResult);
+  return Promise.resolve(txResult.result.txhash);
 }
