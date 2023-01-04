@@ -140,7 +140,7 @@ export async function keplr_submit(
     const txHash = await injWallet.broadcastTx(tx);
     return Promise.resolve(txHash);
 
-    //return Promise.resolve("not implemented");
+    // return Promise.resolve("not implemented");
   } else {
     const offline = window.keplr.getOfflineSigner(chain_id);
 

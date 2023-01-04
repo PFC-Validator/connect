@@ -63,9 +63,7 @@ export async function claim(wallet: ConnectWallet, chain_id: string, account: st
 
     case WalletChoices.WalletConnect:
     case WalletChoices.Terra:
-      const commission = new TerraMsgWithdrawValidatorCommission(valOper);
-      const rewards = new TerraMsgWithdrawDelegatorReward(account, valOper);
-      return [commission, rewards];
+      return [new TerraMsgWithdrawValidatorCommission(valOper), new TerraMsgWithdrawDelegatorReward(account, valOper)];
 
     default:
       logger(wallet, `unknown wallet choice ${wallet.choice}`);
