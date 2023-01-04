@@ -1,7 +1,7 @@
 import { Window as KeplrWindow } from "@keplr-wallet/types";
 import { KeplrWalletStore, useWallet } from "../react";
 import { WalletStatus as ConnectWalletStatus } from "./WalletProvider";
-/*
+
 import { CosmosChainId } from "@injectivelabs/ts-types";
 import { KeplrWallet as InjKeplrWallet } from "@injectivelabs/wallet-ts/dist/wallets/keplr";
 import {
@@ -10,7 +10,7 @@ import {
   createTransaction,
   createTxRawFromSigResponse,
 } from "@injectivelabs/sdk-ts";
-*/
+
 import { GasPrice, StdFee } from "@cosmjs/stargate";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 
@@ -95,7 +95,7 @@ export async function keplr_submit(
   chain_id: string,
   account: string,
   msgs: any[],
-  _api: string,
+  api: string,
   rpc: string,
   gasPrice: GasPrice,
   memo: string,
@@ -109,7 +109,6 @@ export async function keplr_submit(
     return Promise.resolve(undefined);
   }
   if (chain_id === "injective-1") {
-    /*
     const injWallet = new InjKeplrWallet(CosmosChainId.Injective);
     //const accounts = await injWallet.getAccounts();
     const offlineSigner = await injWallet.getOfflineSigner();
@@ -141,8 +140,7 @@ export async function keplr_submit(
     const txHash = await injWallet.broadcastTx(tx);
     return Promise.resolve(txHash);
 
-     */
-    return Promise.resolve("not implemented");
+    //return Promise.resolve("not implemented");
   } else {
     const offline = window.keplr.getOfflineSigner(chain_id);
 

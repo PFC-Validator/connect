@@ -1,12 +1,12 @@
 //
 import { ConnectWallet, WalletChoices } from "../wallet";
 import logger from "../lib/logger";
-/*
+
 import {
   MsgWithdrawDelegatorReward as InjMsgWithdrawDelegatorReward,
   MsgWithdrawValidatorCommission as InjMsgWithdrawValidatorCommission,
 } from "@injectivelabs/sdk-ts";
-*/
+
 import {
   MsgWithdrawDelegatorReward as CosmosMsgWithdrawDelegatorReward,
   MsgWithdrawValidatorCommission as CosmosMsgWithdrawValidatorCommission,
@@ -32,7 +32,6 @@ export async function claim(wallet: ConnectWallet, chain_id: string, account: st
   switch (wallet.choice) {
     case WalletChoices.Keplr:
       if (chain_id == "injective-1") {
-        /*
         const commission = InjMsgWithdrawValidatorCommission.fromJSON({
           validatorAddress: valOper,
         });
@@ -40,8 +39,8 @@ export async function claim(wallet: ConnectWallet, chain_id: string, account: st
           validatorAddress: valOper,
           delegatorAddress: account,
         });
-        return [commission, rewards];*/
-        return [];
+        return [commission, rewards];
+        // return [];
       } else {
         const commission = CosmosMsgWithdrawValidatorCommission.fromPartial({
           validatorAddress: valOper,
