@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 
 import logger from "../lib/logger";
 import { StdFee } from "@cosmjs/stargate";
-import { ExtensionOptions, Fee } from "@terra-money/terra.js";
+import { ExtensionOptions, Fee } from "@terra-money/feather.js";
 
 export function terra_wallet_connect(wallet: Wallet): void {
   if (
@@ -51,7 +51,7 @@ export function terra_wallet_status(wallet: Wallet): ConnectWalletStatus {
 
 export function terra_wallet_account(wallet: Wallet): string | undefined {
   if (wallet.wallets.length > 0) {
-    return wallet.wallets[0].terraAddress;
+    return wallet.wallets[0].addresses["terra"];
   }
   return undefined;
 }
@@ -83,7 +83,7 @@ export async function terra_relatedAccountsForWallet(wallet: Wallet, chains: str
 
 export async function terra_submit(
   wallet: Wallet,
-  _chain_id: string,
+  chain_id: string,
   msgs: any[],
   memo: string,
   fee?: StdFee | "auto",
@@ -95,6 +95,7 @@ export async function terra_submit(
     terraFee = undefined;
   }
   const transactionMsg: ExtensionOptions = {
+    chainID: chain_id,
     fee: terraFee, //new Fee(200000, "3000uluna"),
     msgs,
     memo: memo,
