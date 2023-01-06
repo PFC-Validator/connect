@@ -1,8 +1,8 @@
 {
   "name": "@pfc/connect",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "author": "PFC",
-  "license": "GPL-3",
+  "license": "GPL-3.0-or-later",
   "files": [
     "dist",
     "LICENSE",

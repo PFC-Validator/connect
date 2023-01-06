@@ -44,12 +44,13 @@ export async function ibc(
           sourcePort: sourcePort,
           receiver: receiver,
           sender: sender,
+          timeoutTimestamp: 5 * 60 * (10 ^ 9),
         });
 
         return [
           {
             value: ibcXfer,
-            typeUrl: "/ibc.applications.transfer.v1",
+            typeUrl: "/ibc.applications.transfer.v1.tx.MsgTransfer",
           },
         ];
       }
@@ -57,7 +58,8 @@ export async function ibc(
     case WalletChoices.WalletConnect:
     case WalletChoices.Terra: {
       const token: Coin = new Coin(tokenDenom, tokenAmount);
-      return [new TerraMsgTransfer(sourcePort, sourceChannel, token, sender, receiver, undefined, undefined)];
+
+      return [new TerraMsgTransfer(sourcePort, sourceChannel, token, sender, receiver, undefined, 5 * 60 * (10 ^ 9))]; // 5 minutes
     }
     default:
       logger(wallet, `unknown wallet choice ${wallet.choice}`);
