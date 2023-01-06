@@ -1,6 +1,6 @@
 {
   "name": "@pfc/connect",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "author": "PFC",
   "license": "GPL-3.0-or-later",
   "files": [
@@ -33,9 +33,9 @@
     "@injectivelabs/sdk-ts": "^1.0.323",
     "@injectivelabs/wallet-ts": "^1.0.314",
     "@keplr-wallet/cosmos": "^0.11.23",
-    "@terra-money/feather.js": "^1.0.0-beta.4",
-    "@terra-money/use-wallet": "^4.0.0-beta.3",
-    "@terra-money/wallet-provider": "^4.0.0-beta.3",
+    "@terra-money/terra.js":"^3.1.7",
+    "@terra-money/use-wallet":"^3.11.2",
+    "@terra-money/wallet-provider": "^3.11.2",
     "cosmjs-types": "^0.6.1",
     "eccrypto": "^1.1.6",
     "@toruslabs/eccrypto": "^1.1.8",

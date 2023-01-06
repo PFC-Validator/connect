@@ -4,7 +4,7 @@ import logger from "../lib/logger";
 
 import { MsgTransfer as InjMsgTransfer } from "@injectivelabs/sdk-ts";
 
-import { Coin, MsgTransfer as TerraMsgTransfer } from "@terra-money/feather.js";
+// import { Coin, MsgTransfer as TerraMsgTransfer } from "@terra-money/terra.js";
 import { MsgTransfer as CosmosMsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 
 export async function ibc(
@@ -57,8 +57,10 @@ export async function ibc(
 
     case WalletChoices.WalletConnect:
     case WalletChoices.Terra: {
+      return [];
+      /*
       const token: Coin = new Coin(tokenDenom, tokenAmount);
-      const xfer = new TerraMsgTransfer(
+      const _xfer = new TerraMsgTransfer(
         sourcePort,
         sourceChannel,
         token,
@@ -68,7 +70,9 @@ export async function ibc(
         5 * 60 * (10 ^ 9),
       );
 
-      return [xfer]; // 5 minutes
+      return []; // 5 minutes
+
+       */
     }
     default:
       logger(wallet, `unknown wallet choice ${wallet.choice}`);
