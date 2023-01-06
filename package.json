@@ -1,6 +1,6 @@
 {
   "name": "@pfc/connect",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "author": "PFC",
   "license": "GPL-3",
   "files": [
@@ -36,6 +36,7 @@
     "@terra-money/terra.js": "^3.1.7",
     "@terra-money/use-wallet": "^3.11.2",
     "@terra-money/wallet-provider": "^3.11.2",
+    "cosmjs-types": "^0.6.1",
     "eccrypto": "^1.1.6",
     "@toruslabs/eccrypto": "^1.1.8",
     "axios": "^0.27.2",

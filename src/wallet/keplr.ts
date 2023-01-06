@@ -148,7 +148,8 @@ export async function keplr_submit(
       gasPrice,
     });
     //console.log(signer);
-    signer.getTx("s");
+    //signer.getTx("s");
+
     const txResponse = await signer.signAndBroadcast(account, msgs, fee, memo);
     // eslint-disable-next-line no-console
     console.log("tx Response", txResponse);
