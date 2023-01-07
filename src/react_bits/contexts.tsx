@@ -2,7 +2,7 @@ import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { Decimal } from "@cosmjs/math";
 import type { OfflineSigner } from "@cosmjs/proto-signing";
 import type { Coin } from "@cosmjs/stargate";
-import React, { useEffect } from "react";
+
 import { toast } from "react-hot-toast";
 import { createTrackedSelector } from "react-tracked";
 import create from "zustand";
@@ -16,6 +16,7 @@ import { AppConfig, KeplrWalletStore } from "./defs";
 import { keplrConfig } from "./config";
 import { getConfig } from "./defaults";
 import { StaticWalletProvider, WalletProvider, WalletProviderProps } from "@terra-money/wallet-provider";
+import React, { useEffect } from "react";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface

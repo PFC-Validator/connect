@@ -1,5 +1,5 @@
 import { Wallet as TerraWallet } from "@terra-money/use-wallet/useWallet";
-import { KeplrWalletStore } from "../react";
+import { KeplrWalletStore } from "../react_bits";
 import { GasPrice, StdFee } from "@cosmjs/stargate";
 import { EncodeObject } from "@cosmjs/proto-signing";
 //export const WALLETCHOICE = "wallet_choice";

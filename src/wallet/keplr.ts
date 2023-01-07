@@ -1,8 +1,7 @@
 import { Window as KeplrWindow } from "@keplr-wallet/types";
-import { KeplrWalletStore, useWallet } from "../react";
+import { KeplrWalletStore, useWallet } from "../react_bits";
 import { WalletStatus as ConnectWalletStatus } from "./WalletProvider";
 
-import { CosmosChainId } from "@injectivelabs/ts-types";
 import { KeplrWallet as InjKeplrWallet } from "@injectivelabs/wallet-ts/dist/wallets/keplr";
 import {
   ChainRestAuthApi,
@@ -15,6 +14,7 @@ import { defaultRegistryTypes, GasPrice, StdFee } from "@cosmjs/stargate";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { Registry } from "@cosmjs/proto-signing";
 import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
+import { CosmosChainId } from "@injectivelabs/ts-types";
 
 //import { KeplrWalletStore, useWallet } from '@/keplr/contexts/wallet';
 declare global {

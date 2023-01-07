@@ -29,7 +29,7 @@ import {
   walletconnect_wallet_disconnect,
   walletconnect_wallet_status,
 } from "./wallet_connect";
-import { KeplrWalletStore } from "../react";
+import { KeplrWalletStore } from "../react_bits";
 import logger from "../lib/logger";
 import { GasPrice, StdFee } from "@cosmjs/stargate";
 
