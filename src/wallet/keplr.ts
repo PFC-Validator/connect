@@ -11,8 +11,10 @@ import {
   createTxRawFromSigResponse,
 } from "@injectivelabs/sdk-ts";
 
-import { GasPrice, StdFee } from "@cosmjs/stargate";
+import { defaultRegistryTypes, GasPrice, StdFee } from "@cosmjs/stargate";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import { Registry } from "@cosmjs/proto-signing";
+import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 
 //import { KeplrWalletStore, useWallet } from '@/keplr/contexts/wallet';
 declare global {
@@ -143,9 +145,12 @@ export async function keplr_submit(
     // return Promise.resolve("not implemented");
   } else {
     const offline = window.keplr.getOfflineSigner(chain_id);
+    const registry = new Registry(defaultRegistryTypes);
+    registry.register("/ibc.applications.transfer.v1.MsgTransfer", MsgTransfer);
 
     const signer = await SigningCosmWasmClient.connectWithSigner(rpc, offline, {
       gasPrice,
+      registry,
     });
     //console.log(signer);
     //signer.getTx("s");
